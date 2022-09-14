@@ -18,11 +18,6 @@
                     <option value="vyras">Vyras</option>
                     <option value="moteris">Moteris</option>
                 </select> <br/><br/>
-                
-                
-                <!-- <input type="date" name="Data" id="date"> <br/><br/>
-                <input type="month" name="Data" id="date"> <br/><br/>
-                <input type="day" name="Data" id="date"> <br/><br/> -->
 
                 <label for="Data">Iveskite kelintais metais gimete pvz: 2022-09-07</label><br/>
                 <label for="remind">Jeigu neatsimenate savo gimimo dienos ar menesio i tas vietas irasykite 00 pvz: 2022-00-00</label><br/>
@@ -73,10 +68,13 @@
         secondMultiplier = [3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
 
         def generate_id(e):
+
+            <!-- Pasiemu visus imputus -->
             gender = Element('gender').element.value
             kidsBorn = Element('number').element.value
             date = Element('date').element.value    
             console.log(date)
+
             <!-- ivesta gimusiu vaiku eiles numeri apvaliname i tris paskutinius skaicius -->
             if(int(kidsBorn) < 10):
                 kidsBorn = "00" + str(int(kidsBorn))
@@ -87,8 +85,62 @@
             elif(int(kidsBorn) >= 1000):
                 kidsBorn = str(kidsBorn[-3:])
 
-           
-        
+            <!-- Pasiemame reikalingus skaicius is imputo -->
+            yearFirst = str(date[1])
+            yearSecond = str(date[2:4])
+            month = str(date[5:7])
+            day = str(date[8:10])
+
+            
+            <!-- Randa prima skaiciu pagal simtmeti -->
+            def firstNumber(genderFirstNumber, yearFirst):
+                for key, value in genderFirstNumber.items():
+                    if(key == yearFirst):
+                        return str(value)
+            
+            <!-- Paskutinio skaiciaus skaiciavimo formule -->
+            def calculateLastNumer(multipliers, firstMultiplier):
+                addNumber = 0
+                dauginamasis = 0
+
+                for value in firstMultiplier:
+                    addNumber += int(multipliers[dauginamasis]) * value
+                    dauginamasis += 1
+            
+                lastNumb = int(addNumber%11)
+                return lastNumb
+
+            <!-- Ziurime kuria skaiciavimo formule naudosime paskutiniam skaiciui -->
+            def checkLastNumb ( firsNumberMale, yearFirst, yearSecond, month, day, kidsBorn, firstMultiplier, secondMultiplier):
+
+                <!-- Sudedama skaiciu seka kad panaudojus skaiciavimo formule surasti paskutini skaiciu -->
+                multipliers = firstNumber(firsNumberMale, yearFirst) + yearSecond + month + day + kidsBorn
+
+                <!-- Funkcija suskaiciuoti paskutiniam skaiciui -->
+                lastNumb = calculateLastNumer(multipliers, firstMultiplier)
+
+                <!-- Jei likutis nelygus 10 isvedamas likutis kaip paskutinis skaicius -->
+                if(lastNumb != 10):
+                    pyscript.write('id', firstNumber(firsNumberMale, yearFirst) + yearSecond + month + day + kidsBorn + str(lastNumb))
+
+                <!-- Jei likutis lygus 10 skaiciuojama vel paskutini skaiciu su kitais kintamaisiais -->
+                elif(lastNumb == 10):
+                    lastNumb = calculateLastNumer(multipliers, secondMultiplier)
+                    
+                    <!-- Jei likutis nelygus 10 isvedamas likutis kaip paskutinis skaicius -->
+                    if(lastNumb != 10):
+                        pyscript.write('id', firstNumber(firsNumberMale, yearFirst) + yearSecond + month + day + kidsBorn + str(lastNumb))
+
+                    <!-- Jei likutis lygus 10 isvedamas 0 kaip paskutinis skaicius -->
+                    elif(lastNumb == 10):
+                        pyscript.write('id', firstNumber(firsNumberMale, yearFirst) + yearSecond + month + day + kidsBorn + str(0))
+            
+
+            <!-- Ziurime ar tai vyras ar moteris -->
+            if(gender == 'vyras'):
+                checkLastNumb ( firsNumberMale, yearFirst, yearSecond, month, day, kidsBorn, firstMultiplier, secondMultiplier)
+            elif(gender == 'moteris'):
+                checkLastNumb ( firsNumberFemale, yearFirst, yearSecond, month, day, kidsBorn, firstMultiplier, secondMultiplier)
 
         generate_proxy = create_proxy(generate_id)
         generate_button = document.getElementById("generate")
