@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Asmens tapatybes kodo generatorius</h1>
+        <div>
+            <form>
+                <label for="Lytis">Jusu lyris?</label>
+                <select name="Lytis" id="gender">
+                    <option value="vyras">Vyras</option>
+                    <option value="moteris">Moteris</option>
+                </select> <br/><br/>
+                
+                
+                <!-- <input type="date" name="Data" id="date"> <br/><br/>
+                <input type="month" name="Data" id="date"> <br/><br/>
+                <input type="day" name="Data" id="date"> <br/><br/> -->
+
+                <label for="Data">Iveskite kelintais metais gimete pvz: 2022-09-07</label><br/>
+                <label for="remind">Jeigu neatsimenate savo gimimo dienos ar menesio i tas vietas irasykite 00 pvz: 2022-00-00</label><br/>
+                <input type="text" name= "date" id="date"> <br/><br/>
+                
+                <label for="skaicius">Kelintas gimete visu asmenu tos dienos eiles skaicius?</label>
+                <input type="text" name= "number" id="number"> <br/><br/>
+                
+                <input type="button" id="generate" value="Generuoti ID">
+                <p id="id"></p>  
+            </form>
+        </div>
+    </header>
+    <py-script>
+        from js import document
+        from pyodide import create_proxy
+
+        <!-- Vyro pirmas skaicius pagal simtmeti -->
+        firsNumberMale = {
+            "0": 5,
+            "1": 7,
+            "2": 9,
+            "3": 1,
+            "4": 3,
+            "5": 5,
+            "6": 7,
+            "7": 9,
+            "8": 1,
+            "9": 3
+          }
+          
+        <!-- Moters pirmas skaicius pagal simtmeti -->
+        firsNumberFemale = {
+            "0": 6,
+            "1": 8,
+            "2": 0,
+            "3": 2,
+            "4": 4,
+            "5": 6,
+            "6": 8,
+            "7": 0,
+            "8": 2,
+            "9": 4
+          }  
+
+        <!-- Kontrolinio lygciu daugybos skaiciai -->
+        firstMultiplier = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1]
+        secondMultiplier = [3, 4, 5, 6, 7, 8, 9, 1, 2, 3]
+
+        def generate_id(e):
+            gender = Element('gender').element.value
+            kidsBorn = Element('number').element.value
+            date = Element('date').element.value    
+            console.log(date)
+            <!-- ivesta gimusiu vaiku eiles numeri apvaliname i tris paskutinius skaicius -->
+            if(int(kidsBorn) < 10):
+                kidsBorn = "00" + str(int(kidsBorn))
+            elif(int(kidsBorn) >= 10 and int(kidsBorn) < 100):
+                kidsBorn = "0" + str(int(kidsBorn))
+            elif(int(kidsBorn) >= 100 and int(kidsBorn) < 1000):
+                kidsBorn = str(int(kidsBorn))
+            elif(int(kidsBorn) >= 1000):
+                kidsBorn = str(kidsBorn[-3:])
+
+           
+        
+
+        generate_proxy = create_proxy(generate_id)
+        generate_button = document.getElementById("generate")
+        generate_button.addEventListener("click", generate_proxy)
+    </py-script>
+</body>
+</html>
